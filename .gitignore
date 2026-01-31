@@ -40,4 +40,5 @@ dist/
 tmp/
 
 
-storage/
+/storage
+/config
