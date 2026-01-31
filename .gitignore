@@ -38,3 +38,6 @@ dist/
 # Temporary files
 *.tmp
 tmp/
+
+
+storage/
