@@ -11,9 +11,11 @@ import (
 	"github.com/Dipumane1318/PROJECT_STUDENTS_REST_API/internal/types"
 	"github.com/Dipumane1318/PROJECT_STUDENTS_REST_API/internal/utils/response"
 	"github.com/go-playground/validator/v10"
+	// "golang.org/x/mod/sumdb/storage"
+	"github.com/Dipumane1318/PROJECT_STUDENTS_REST_API/internal/storage"
 )
 
-func New() http.HandlerFunc {
+func New(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request)  {
 		slog.Info("creating a student")
 
@@ -38,6 +40,19 @@ func New() http.HandlerFunc {
 			return
 		}
 
-		response.WriteJSON(w, http.StatusCreated, map[string]string{"successfully": "OK"})
+		lastId, err := storage.CreateStudent(
+			student.Name,
+			student.Email,
+			student.Age,
+		)
+
+		slog.Info("user created successfully", slog.String("userId", fmt.Sprint(lastId)))
+
+		if err != nil{
+			response.WriteJSON(w, http.StatusInternalServerError, err)
+			return 
+		}
+
+		response.WriteJSON(w, http.StatusCreated, map[string]int64{"id": lastId})
 	}
 }  
